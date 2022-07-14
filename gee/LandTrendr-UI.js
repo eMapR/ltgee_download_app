@@ -169,7 +169,7 @@ exports.colYearsPanel = function(){
   startYearslider.style().set('stretch', 'horizontal');
   
   var endYearLabel = ui.Label('End Year:');
-  var endYearslider = ui.Slider({min:2018, max:2021, value:2021, step:1});
+  var endYearslider = ui.Slider({min:2018, max:2022, value:2021, step:1});
   endYearslider.style().set('stretch', 'horizontal');
   
   return ui.Panel(
@@ -350,13 +350,13 @@ exports.rgbYearsPanel = function(){
   var rgbSectionLabel = ui.Label('Define Years for Red, Green, Blue',{fontWeight: 'bold'});
   
   var redYearLabel = ui.Label('Red Year:');
-  var redYearslider = ui.Slider({min:1984, max:2021, value:1990, step:1, style:{stretch: 'horizontal'}});
+  var redYearslider = ui.Slider({min:1984, max:2022, value:1990, step:1, style:{stretch: 'horizontal'}});
   
   var greenYearLabel = ui.Label('Green Year:');
-  var greenYearslider = ui.Slider({min:1984, max:2021, value:2000, step:1, style:{stretch: 'horizontal'}});
+  var greenYearslider = ui.Slider({min:1984, max:2022, value:2000, step:1, style:{stretch: 'horizontal'}});
   
   var blueYearLabel = ui.Label('Blue Year:');
-  var blueYearslider = ui.Slider({min:1984, max:2021, value:2010, step:1, style:{stretch: 'horizontal'}});
+  var blueYearslider = ui.Slider({min:1984, max:2022, value:2010, step:1, style:{stretch: 'horizontal'}});
   
   var rgbYearsPanel = ui.Panel([
       rgbSectionLabel,
@@ -460,6 +460,57 @@ exports.getBuffer = function(bufferPanel){
   return parseInt(bufferPanel.widgets().get(1).widgets().get(1).getValue());
 };
 
+// EPSG PANEL
+exports.epsgPanel = function(){
+  var epsgSectionLabel = ui.Label('Define a EPSG projection code',{fontWeight: 'bold'});
+  var epsgBoxLabel = ui.Label('EPSG:');
+  var epsgBox = ui.Textbox({value: '5070', style:{stretch: 'horizontal'}});
+  return ui.Panel(
+    [
+      epsgSectionLabel,
+      ui.Panel([epsgBoxLabel,epsgBox], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'})
+    ]
+  );
+};
+
+exports.getEPSG = function(epsgPanel){    
+  return epsgPanel.widgets().get(1).widgets().get(1).getValue();
+};
+
+// File Name PANEL
+exports.fileNamePanel = function(){
+  var fileSectionLabel = ui.Label('Define a file name prefix',{fontWeight: 'bold'});
+  var fileBoxLabel = ui.Label('File Name Prefix:');
+  var fileBox = ui.Textbox({value: 'App-Data-File-Name', style:{stretch: 'horizontal'}});
+  return ui.Panel(
+    [
+      fileSectionLabel,
+      ui.Panel([fileBoxLabel,fileBox], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'})
+    ]
+  );
+};
+
+exports.getFileName = function(fileNamePanel){      // add by Peter Clary 5/17/2020
+  return fileNamePanel.widgets().get(1).widgets().get(1).getValue();
+};
+
+
+// Folder Name PANEL
+exports.folderNamePanel = function(){
+  var folderSectionLabel = ui.Label('Define a folder name',{fontWeight: 'bold'});
+  var folderBoxLabel = ui.Label('Folder Name Prefix:');
+  var folderBox = ui.Textbox({value: 'App-Data-Folder-Name', style:{stretch: 'horizontal'}});
+  return ui.Panel(
+    [
+      folderSectionLabel,
+      ui.Panel([folderBoxLabel,folderBox], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'})
+    ]
+  );
+};
+
+exports.getFolderName = function(folderNamePanel){      // add by Peter Clary 5/17/2020
+  return folderNamePanel.widgets().get(1).widgets().get(1).getValue();
+};
 
 // REGION DRAWING CHECKBOX
 exports.drawPolygonPanel = function(){
@@ -565,4 +616,3 @@ var makeBoolean = function(value){
   }
   return value;
 };
-
