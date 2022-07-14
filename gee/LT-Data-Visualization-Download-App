@@ -1,6 +1,7 @@
-//V2.4
+//V2.5 7/14/2022
 ui.root.clear();
-var ltgee = require('users/emaprlab/public:LT-data-download/LandTrendr_V2.4.js');  
+var ltgee = require('users/emaprlab/public:Modules/LandTrendr.js');  
+ 
 var ltgeeUI = require('users/emaprlab/public:LT-data-download/LandTrendr-UI_V2.4.js');  
 
 //===============================================================================================================
@@ -44,9 +45,9 @@ var bufferPanel = ltgeeUI.bufferPanel({});
 var coordsPanel = ltgeeUI.coordsPanel();
 var drawPanel = ltgeeUI.drawPolygonPanel()
 var submitButton = ltgeeUI.submitButton();
-var epsgPanel = ltgee.epsgPanel();  
-var fileNamePanel = ltgee.fileNamePanel();  
-var folderNamePanel = ltgee.folderNamePanel();  
+var epsgPanel = ltgeeUI.epsgPanel();  
+var fileNamePanel = ltgeeUI.fileNamePanel();  
+var folderNamePanel = ltgeeUI.folderNamePanel();  
 //download options 
 var downloadPanel = ltgeeUI.DownloadPanel()
 var DownloadButton = ltgeeUI.downloadButton();
@@ -88,7 +89,7 @@ LTparamsCtrlButton.onClick(function(){
     ui.Label('12) Define minObservationsNeeded; Min observations needed to perform output fitting.'),
     ui.Label('13) Proceed to the next options.'),
     ui.Label('* Click here for more information', {}, 'https://emapr.github.io/LT-GEE/lt-gee-requirements.html#lt-parameters'),
-    ui.Label('*Coming soon* Click here for a video describing theses options.'),
+    //ui.Label('*Coming soon* Click here for a video describing theses options.'),
     ui.Label('____________________________________________________'),
   ]);
   
@@ -236,7 +237,7 @@ downloadCtrlButton.onClick(function(){
     ui.Label('5) Click the Download Data button to start tasks.'),
     ui.Label('6) Look under the Tasks tab for the export processes.'),
     ui.Label('7) Click the RUN button to start the downloading process to your Google Drive. Each process will create its own folder in your google drive and save data to those locations. '),
-    ui.Label('*Coming soon* Click here for a video describing theses options.'),
+    //ui.Label('*Coming soon* Click here for a video describing theses options.'),
     ui.Label('____________________________________________________'),
   ]);    
   if(downloadCtrlPanel.style().get('shown')){
@@ -577,36 +578,10 @@ var assetHandler = function(assetPath, assetName, assetColor, mapLayer, useAsCen
 var plotAsset = function(){
   var importedLyr = ltgeeUI.lyrOverlayGet(LayerOverlayPanel);
   
-  //console.log(importedLyr)
-
-  // var linkAsset = importedLyr[0];
-  // var linkAsset1 = importedLyr[1];
-  // var linkAsset2 = importedLyr[2];
-  // var assetname = importedLyr[3];
-  // var assetname1 = importedLyr[4];
-  // var assetname2 = importedLyr[5];
-  
   var ok1 = assetHandler(importedLyr[0], importedLyr[3], importedLyr[6], 8, true);
-  var ok2 = assetHandler(importedLyr[1], importedLyr[4], importedLyr[7], 8, false);
-  var ok3 = assetHandler(importedLyr[2], importedLyr[5], importedLyr[8], 8, false);
- 
-
-  // var aoiVis = {color: importedLyr[6], fillColor: '#66000000'}
-  // var aoiVis1 = {color: importedLyr[7], fillColor: '#66000000'}
-  // var aoiVis2 = {color: importedLyr[8], fillColor: '#66000000'}
+  var ok2 = assetHandler(importedLyr[1], importedLyr[4], importedLyr[7], 9, false);
+  var ok3 = assetHandler(importedLyr[2], importedLyr[5], importedLyr[8], 10, false);
   
-  // var table = ee.FeatureCollection(linkAsset).style(aoiVis);
-  // var table1 = ee.FeatureCollection(linkAsset1).style(aoiVis1);
-  // var table2 = ee.FeatureCollection(linkAsset2).style(aoiVis2);
-  
-  // // var fireCol = ee.ImageCollection("MODIS/006/MCD64A1")
-  // //   .filterDate('2019-04-01', '2019-09-01')
-  // map.centerObject(ee.FeatureCollection(importedLyr[0]))
-  
-  // map.layers().set(8, ui.Map.Layer(table, {} , assetname));
-  // map.layers().set(9, ui.Map.Layer(table1, {} , assetname1));
-  // map.layers().set(10, ui.Map.Layer(table2, {} , assetname2));
-  //map.layers().set(0, ui.Map.Layer(rgbVis,null,'RGB Change'));
 }
 
 //==============================================================================================================================
@@ -659,8 +634,8 @@ var plotTheRGDeltaMap = function(){
    //calculate magnitude and direction imagery
   var MagnitudeRG = ftvStack.expression(
     'vert2 == 0 ? 0 : (vert1 > vert2 ? -1*(vert1 - (vert2)) : vert2 - (vert1))', {
-    'vert1': ftvStack.select(rgbYears.red.toString()),
-    'vert2': ftvStack.select(rgbYears.green.toString())           
+    'vert1': ftvStack.select("yr_"+rgbYears.red.toString()),
+    'vert2': ftvStack.select("yr_"+rgbYears.green.toString())           
     }).clip(aoi);
   var fittedMagnitudeImageRG = ee. Image.cat(MagnitudeRG).rename([rgbYears.red.toString()+'_'+rgbYears.green.toString()])
   
@@ -711,8 +686,8 @@ var plotTheGBDeltaMap = function(){
   
   var MagnitudeGB = ftvStack.expression(
     'vert2 == 0 ? 0 : (vert1 > vert2 ? -1*(vert1 - (vert2)) : vert2 - (vert1))', {
-    'vert1': ftvStack.select(rgbYears.green.toString()),
-    'vert2': ftvStack.select(rgbYears.blue.toString())           
+    'vert1': ftvStack.select("yr_"+rgbYears.green.toString()),
+    'vert2': ftvStack.select("yr_"+rgbYears.blue.toString())           
     }).clip(aoi);
   var fittedMagnitudeImageGB = ee. Image.cat(MagnitudeGB).rename([rgbYears.green.toString()+'_'+rgbYears.blue.toString()])
   
@@ -761,7 +736,7 @@ var fullTimeSeriesMap = function(){
 
   
   var stretchGB = ltgee.stdDevStretch(ftvStack, aoi, 3)
-  var VISparamsGB = {"opacity":1,"bands":[rgbYears.red.toString()],"min":stretchGB[0],"max":stretchGB[1],"gamma":1};
+  var VISparamsGB = {"opacity":1,"bands":["yr_"+rgbYears.red.toString()],"min":stretchGB[0],"max":stretchGB[1],"gamma":1};
   map.layers().set(3, ui.Map.Layer(ftvStack,{},'Full Time Series').setVisParams(VISparamsGB));
 }
 
@@ -784,9 +759,10 @@ var downloadTheMap = function(){
   var importedLyr1 = ltgeeUI.lyrOverlayGet(LayerOverlayPanel)[0];
   var aoi;
   var selectDraw = ltgeeUI.getDrawPolygon(drawPanel)
-  var epsgCode = ltgee.getEPSG(epsgPanel);
-  var fileName = ltgee.getFileName(fileNamePanel)
-  var folderName = ltgee.getFolderName(folderNamePanel)
+  print(epsgPanel[0])
+  var epsgCode = ltgeeUI.getEPSG(epsgPanel);
+  var fileName = ltgeeUI.getFileName(fileNamePanel)
+  var folderName = ltgeeUI.getFolderName(folderNamePanel)
   var DSNRopt = false
   var yearsInTime = ee.List.sequence(colYrs.startYear, colYrs.endYear);
   //handle for draw polygon or coordinate buffer
@@ -817,7 +793,7 @@ var downloadTheMap = function(){
     if(imagesToDownload[i] === 1){
       // exports RGB image 1 
       Export.image.toDrive({
-        image:ftvStack.select([rgbYears.red.toString(),rgbYears.green.toString(),rgbYears.blue.toString()])
+        image:ftvStack.select(["yr_"+rgbYears.red.toString(),"yr_"+rgbYears.green.toString(),"yr_"+rgbYears.blue.toString()])
           .clip(aoi)
           .unmask(-9999), 
         description: fileName+'-RGB-'+rgbYears.red.toString()+"-"+rgbYears.green.toString()+"-"+rgbYears.blue.toString(), 
@@ -835,8 +811,8 @@ var downloadTheMap = function(){
       //calculate magnitude and direction imagery
       var MagnitudeRG = ftvStack.expression(
         'vert2 == 0 ? 0 : (vert1 > vert2 ? -1*(vert1 - (vert2)) : vert2 - (vert1))', {
-        'vert1': ftvStack.select(rgbYears.red.toString()),
-        'vert2': ftvStack.select(rgbYears.green.toString())           
+        'vert1': ftvStack.select("yr_"+rgbYears.red.toString()),
+        'vert2': ftvStack.select("yr_"+rgbYears.green.toString())           
         });
       // renames image
       var fittedMagnitudeImageRG = ee. Image.cat(MagnitudeRG).rename([rgbYears.red.toString()+'_'+rgbYears.green.toString()])
@@ -860,8 +836,8 @@ var downloadTheMap = function(){
       //calculate magnitude and direction imagery============================================================================
       var MagnitudeGB = ftvStack.expression(
         'vert2 == 0 ? 0 : (vert1 > vert2 ? -1*(vert1 - (vert2)) : vert2 - (vert1))', {
-        'vert1': ftvStack.select(rgbYears.green.toString()),
-        'vert2': ftvStack.select(rgbYears.blue.toString())           
+        'vert1': ftvStack.select("yr_"+rgbYears.green.toString()),
+        'vert2': ftvStack.select("yr_"+rgbYears.blue.toString())           
         });
         
       var fittedMagnitudeImageGB = ee. Image.cat(MagnitudeGB).rename([rgbYears.green.toString()+'_'+rgbYears.blue.toString()])
@@ -948,7 +924,7 @@ var downloadTheMap = function(){
       for (var jj=0; jj<=1+(colYrs.endYear-colYrs.startYear); jj++) {
 
         Export.image.toDrive({
-        image:ftvStack.select(jj)
+        image:ftvStack.select("yr_"+jj)
         .clip(aoi)
         .unmask(-9999), 
         description: fileName+'-'+(jj+colYrs.startYear).toString()+"-ofFullFittedTimeSeries", 
@@ -1109,18 +1085,28 @@ var mapDisturbance = function(){
   var DSNRopt = false;
   //var DSNRopt = ltgeeUI.getDSNR(DSNRPanelbox)
   var selectDraw = ltgeeUI.getDrawPolygon(drawPanel);
+    
+  var importedLyrcheckbox = ltgeeUI.lyrOverlayGet(LayerOverlayPanel)[9];
+  var importedLyr1 = ltgeeUI.lyrOverlayGet(LayerOverlayPanel)[0];
+
   if (selectDraw === true ){
-    aoi = getAverageElevation();
-    map.centerObject(aoi);
+    aoi = getAverageElevation()
+    map.centerObject(aoi)
     //console.log('Draw Polygon')
+  }else if(importedLyrcheckbox === true){
+    aoi = ee.FeatureCollection(importedLyr1).geometry()
+    map.centerObject(aoi)
+    
   }else{
     var buffer = ltgeeUI.getBuffer(bufferPanel);
     buffer = buffer*1000;
     var point = ee.Geometry.Point(coords.lon, coords.lat).buffer(200);
     aoi = point.buffer(buffer).bounds();
     map.centerObject(aoi)
-    //console.log('point buffer')
+   // console.log('point buffer')
   }
+  
+  
   
   // run landtrendr and get the segmenation information
   var lt = ltgee.runLT(colYrs.startYear, colYrs.endYear, colDates.startDate, colDates.endDate, aoi, index, [], runParams, masked);
@@ -1351,6 +1337,5 @@ map.drawingTools().setLinked(false);
 map.drawingTools().setDrawModes(['polygon']);
 
 ui.root.add(plotPanel);
-
 
 
